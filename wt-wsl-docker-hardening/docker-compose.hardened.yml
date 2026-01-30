@@ -1,0 +1,59 @@
+services:
+  moltbot-gateway:
+    # Hardened profile: no host bind mounts, no exposed ports, read-only root
+    ports: []
+    environment:
+      CLAWDBOT_GATEWAY_BIND: loopback
+      CLAWDBOT_GATEWAY_PORT: ${CLAWDBOT_GATEWAY_PORT:-18789}
+      CLAWDBOT_BRIDGE_PORT: ${CLAWDBOT_BRIDGE_PORT:-18790}
+      CLAWDBOT_CONFIG_PATH: /home/node/.clawdbot/moltbot.json
+    volumes:
+      - moltbot_state:/home/node/.clawdbot
+      - moltbot_workspace:/home/node/clawd
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/tmp
+      - /run
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 1g
+    memswap_limit: 2g
+    cpus: "1.0"
+    ulimits:
+      nofile:
+        soft: 1024
+        hard: 2048
+      nproc: 256
+
+  moltbot-cli:
+    environment:
+      CLAWDBOT_CONFIG_PATH: /home/node/.clawdbot/moltbot.json
+    volumes:
+      - moltbot_state:/home/node/.clawdbot
+      - moltbot_workspace:/home/node/clawd
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/tmp
+      - /run
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256
+    mem_limit: 1g
+    memswap_limit: 2g
+    cpus: "1.0"
+    ulimits:
+      nofile:
+        soft: 1024
+        hard: 2048
+      nproc: 256
+
+volumes:
+  moltbot_state:
+  moltbot_workspace:

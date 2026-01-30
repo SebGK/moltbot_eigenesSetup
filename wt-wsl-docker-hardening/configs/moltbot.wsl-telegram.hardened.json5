@@ -1,0 +1,46 @@
+// Hardened WSL2 container config: Telegram-only inbound, no web tools, no UI
+{
+  gateway: {
+    mode: "local",
+    bind: "loopback",
+    port: 18789,
+    controlUi: { enabled: false },
+    auth: { mode: "token", token: "${CLAWDBOT_GATEWAY_TOKEN}" }
+  },
+  discovery: { mdns: { mode: "off" } },
+  web: { enabled: false },
+  browser: { enabled: false },
+  commands: {
+    bash: false,
+    config: false,
+    debug: false,
+    restart: false
+  },
+  session: { scope: "per-channel-peer" },
+  agents: {
+    defaults: {
+      workspace: "/home/node/clawd"
+    }
+  },
+  tools: {
+    profile: "coding",
+    deny: ["group:web", "group:ui", "group:automation", "nodes"],
+    web: {
+      search: { enabled: false },
+      fetch: { enabled: false }
+    },
+    elevated: { enabled: false }
+  },
+  channels: {
+    telegram: {
+      enabled: true,
+      botToken: "${TELEGRAM_BOT_TOKEN}",
+      dmPolicy: "pairing",
+      allowFrom: ["tg:123456789"],
+      groupPolicy: "allowlist",
+      groupAllowFrom: ["tg:123456789"],
+      groups: { "*": { requireMention: true } },
+      configWrites: false
+    }
+  }
+}
