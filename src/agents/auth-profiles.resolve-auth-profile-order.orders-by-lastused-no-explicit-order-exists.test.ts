@@ -59,6 +59,47 @@ describe("resolveAuthProfileOrder", () => {
     });
     expect(order).toEqual(["anthropic:a", "anthropic:b", "anthropic:c"]);
   });
+
+  it("respects oauthFirst=false by ordering only by lastUsed", () => {
+    const order = resolveAuthProfileOrder({
+      cfg: {
+        auth: {
+          broker: {
+            oauthFirst: false,
+          },
+        },
+      },
+      store: {
+        version: 1,
+        profiles: {
+          "anthropic:a": {
+            type: "oauth",
+            provider: "anthropic",
+            access: "access-token",
+            refresh: "refresh-token",
+            expires: Date.now() + 60_000,
+          },
+          "anthropic:b": {
+            type: "api_key",
+            provider: "anthropic",
+            key: "sk-b",
+          },
+          "anthropic:c": {
+            type: "api_key",
+            provider: "anthropic",
+            key: "sk-c",
+          },
+        },
+        usageStats: {
+          "anthropic:a": { lastUsed: 300 },
+          "anthropic:b": { lastUsed: 100 },
+          "anthropic:c": { lastUsed: 200 },
+        },
+      },
+      provider: "anthropic",
+    });
+    expect(order).toEqual(["anthropic:b", "anthropic:c", "anthropic:a"]);
+  });
   it("pushes cooldown profiles to the end, ordered by cooldown expiry", () => {
     const now = Date.now();
     const order = resolveAuthProfileOrder({

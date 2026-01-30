@@ -13,6 +13,18 @@ export type AuthProfileConfig = {
 export type AuthConfig = {
   profiles?: Record<string, AuthProfileConfig>;
   order?: Record<string, string[]>;
+  broker?: {
+    /** Enable the Auth Broker (default: true). */
+    enabled?: boolean;
+    /** Prefer OAuth/token credentials over API keys (default: true). */
+    oauthFirst?: boolean;
+    /** Allow API key fallback when OAuth/token is unavailable (default: true). */
+    allowApiKeyFallback?: boolean;
+    /** Provider priority list for the broker. */
+    providers?: string[];
+    /** Preferred provider override (must be in providers list). */
+    preferredProvider?: string;
+  };
   cooldowns?: {
     /** Default billing backoff (hours). Default: 5. */
     billingBackoffHours?: number;

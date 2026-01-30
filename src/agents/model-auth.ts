@@ -13,6 +13,7 @@ import {
   resolveAuthProfileOrder,
   resolveAuthStorePathForDisplay,
 } from "./auth-profiles.js";
+import { resolveAuthBrokerConfig } from "./auth-broker.js";
 import { normalizeProviderId } from "./model-selection.js";
 
 export { ensureAuthProfileStore, resolveAuthProfileOrder } from "./auth-profiles.js";
@@ -136,6 +137,10 @@ export async function resolveApiKeyForProvider(params: {
 }): Promise<ResolvedProviderAuth> {
   const { provider, cfg, profileId, preferredProfile } = params;
   const store = params.store ?? ensureAuthProfileStore(params.agentDir);
+  const broker = resolveAuthBrokerConfig(cfg);
+  const normalizedProvider = normalizeProviderId(provider);
+  const brokerApplies = broker.enabled && broker.providers.includes(normalizedProvider);
+  const allowApiKeyFallback = !brokerApplies || broker.allowApiKeyFallback;
 
   if (profileId) {
     const resolved = await resolveApiKeyForProfile({
@@ -189,21 +194,33 @@ export async function resolveApiKeyForProvider(params: {
 
   const envResolved = resolveEnvApiKey(provider);
   if (envResolved) {
-    return {
-      apiKey: envResolved.apiKey,
-      source: envResolved.source,
-      mode: envResolved.source.includes("OAUTH_TOKEN") ? "oauth" : "api-key",
-    };
+    const isOauthEnv = envResolved.source.includes("OAUTH_TOKEN");
+    if (isOauthEnv || allowApiKeyFallback) {
+      return {
+        apiKey: envResolved.apiKey,
+        source: envResolved.source,
+        mode: isOauthEnv ? "oauth" : "api-key",
+      };
+    }
   }
 
   const customKey = getCustomProviderApiKey(cfg, provider);
-  if (customKey) {
+  if (customKey && allowApiKeyFallback) {
     return { apiKey: customKey, source: "models.json", mode: "api-key" };
   }
 
   const normalized = normalizeProviderId(provider);
   if (authOverride === undefined && normalized === "amazon-bedrock") {
     return resolveAwsSdkAuthInfo();
+  }
+
+  if (brokerApplies && !allowApiKeyFallback) {
+    throw new Error(
+      [
+        `Auth Broker blocked API key fallback for provider "${provider}".`,
+        `Add OAuth/token credentials or set auth.broker.allowApiKeyFallback=true.`,
+      ].join(" "),
+    );
   }
 
   if (provider === "openai") {

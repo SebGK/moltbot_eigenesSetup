@@ -141,6 +141,23 @@ export async function setOpenrouterApiKey(key: string, agentDir?: string) {
   });
 }
 
+export async function setOpenrouterToken(params: {
+  token: string;
+  profileId?: string;
+  agentDir?: string;
+}) {
+  const profileId = params.profileId ?? "openrouter:oauth";
+  upsertAuthProfile({
+    profileId,
+    credential: {
+      type: "token",
+      provider: "openrouter",
+      token: params.token,
+    },
+    agentDir: resolveAuthAgentDir(params.agentDir),
+  });
+}
+
 export async function setVercelAiGatewayApiKey(key: string, agentDir?: string) {
   upsertAuthProfile({
     profileId: "vercel-ai-gateway:default",

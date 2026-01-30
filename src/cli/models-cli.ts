@@ -6,6 +6,9 @@ import {
   modelsAliasesListCommand,
   modelsAliasesRemoveCommand,
   modelsAuthAddCommand,
+  modelsAuthBrokerLoginCommand,
+  modelsAuthBrokerStatusCommand,
+  modelsAuthBrokerUseCommand,
   modelsAuthLoginCommand,
   modelsAuthOrderClearCommand,
   modelsAuthOrderGetCommand,
@@ -414,6 +417,57 @@ export function registerModelsCli(program: Command) {
           {
             provider: opts.provider as string,
             agent: opts.agent as string | undefined,
+          },
+          defaultRuntime,
+        );
+      });
+    });
+
+  const broker = auth.command("broker").description("Unified OAuth Auth Broker");
+
+  broker
+    .command("status")
+    .description("Show broker configuration and provider auth status")
+    .option("--json", "Output JSON", false)
+    .action(async (opts) => {
+      await runModelsCommand(async () => {
+        await modelsAuthBrokerStatusCommand(
+          {
+            json: Boolean(opts.json),
+          },
+          defaultRuntime,
+        );
+      });
+    });
+
+  broker
+    .command("use")
+    .description("Set preferred provider (and optionally default model)")
+    .argument("[provider]", "Provider id (e.g. openai-codex)")
+    .option("--no-set-default", "Do not update default model", false)
+    .action(async (provider: string | undefined, opts) => {
+      await runModelsCommand(async () => {
+        await modelsAuthBrokerUseCommand(
+          {
+            provider,
+            setDefault: Boolean(opts.setDefault),
+          },
+          defaultRuntime,
+        );
+      });
+    });
+
+  broker
+    .command("login")
+    .description("Login via brokered OAuth/token flow")
+    .option("--provider <id>", "Provider id (openai-codex, anthropic, google-gemini-cli, openrouter)")
+    .option("--set-default", "Apply provider default model", false)
+    .action(async (opts) => {
+      await runModelsCommand(async () => {
+        await modelsAuthBrokerLoginCommand(
+          {
+            provider: opts.provider as string | undefined,
+            setDefault: Boolean(opts.setDefault),
           },
           defaultRuntime,
         );

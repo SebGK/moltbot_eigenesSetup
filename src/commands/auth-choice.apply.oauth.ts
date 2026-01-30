@@ -2,8 +2,9 @@ import { isRemoteEnvironment } from "./oauth-env.js";
 import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
 import { loginChutes } from "./chutes-oauth.js";
 import { createVpsAwareOAuthHandlers } from "./oauth-flow.js";
-import { applyAuthProfileConfig, writeOAuthCredentials } from "./onboard-auth.js";
+import { applyAuthProfileConfig, setOpenrouterToken, writeOAuthCredentials } from "./onboard-auth.js";
 import { openUrl } from "./onboard-helpers.js";
+import { loginOpenRouterOAuth } from "./openrouter-oauth.js";
 
 export async function applyAuthChoiceOAuth(
   params: ApplyAuthChoiceParams,
@@ -86,6 +87,43 @@ export async function applyAuthChoiceOAuth(
           "Verify CHUTES_CLIENT_ID (and CHUTES_CLIENT_SECRET if required).",
           `Verify the OAuth app redirect URI includes: ${redirectUri}`,
           "Chutes docs: https://chutes.ai/docs/sign-in-with-chutes/overview",
+        ].join("\n"),
+        "OAuth help",
+      );
+    }
+    return { config: nextConfig };
+  }
+
+  if (params.authChoice === "openrouter-oauth") {
+    let nextConfig = params.config;
+    const isRemote = isRemoteEnvironment();
+    const spin = params.prompter.progress("Starting OAuth flow…");
+    try {
+      const creds = await loginOpenRouterOAuth({
+        isRemote,
+        openUrl,
+        log: (message) => params.runtime.log(message),
+        note: params.prompter.note,
+        prompt: async (message) => String(await params.prompter.text({ message })),
+        progress: spin,
+      });
+      spin.stop("OpenRouter OAuth complete");
+
+      const profileId = `openrouter:${creds.userId ?? "oauth"}`;
+      await setOpenrouterToken({ token: creds.apiKey, profileId, agentDir: params.agentDir });
+      nextConfig = applyAuthProfileConfig(nextConfig, {
+        profileId,
+        provider: "openrouter",
+        mode: "token",
+      });
+    } catch (err) {
+      spin.stop("OpenRouter OAuth failed");
+      params.runtime.error(String(err));
+      await params.prompter.note(
+        [
+          "Trouble with OAuth?",
+          "Verify OPENROUTER_OAUTH_REDIRECT_URI if you customized it.",
+          "OpenRouter docs: https://openrouter.ai/docs/api-reference/authentication",
         ].join("\n"),
         "OAuth help",
       );

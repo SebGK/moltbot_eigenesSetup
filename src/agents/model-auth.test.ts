@@ -94,6 +94,42 @@ describe("getApiKeyForModel", () => {
     }
   });
 
+  it("blocks API key fallback when auth broker disallows it", async () => {
+    const previousOpenrouter = process.env.OPENROUTER_API_KEY;
+
+    try {
+      process.env.OPENROUTER_API_KEY = "sk-openrouter-test";
+
+      vi.resetModules();
+      const { resolveApiKeyForProvider } = await import("./model-auth.js");
+
+      let error: unknown = null;
+      try {
+        await resolveApiKeyForProvider({
+          provider: "openrouter",
+          cfg: {
+            auth: {
+              broker: {
+                allowApiKeyFallback: false,
+                providers: ["openrouter"],
+              },
+            },
+          },
+          store: { version: 1, profiles: {} },
+        });
+      } catch (err) {
+        error = err;
+      }
+      expect(String(error)).toContain("Auth Broker blocked API key fallback");
+    } finally {
+      if (previousOpenrouter === undefined) {
+        delete process.env.OPENROUTER_API_KEY;
+      } else {
+        process.env.OPENROUTER_API_KEY = previousOpenrouter;
+      }
+    }
+  });
+
   it("suggests openai-codex when only Codex OAuth is configured", async () => {
     const previousStateDir = process.env.CLAWDBOT_STATE_DIR;
     const previousAgentDir = process.env.CLAWDBOT_AGENT_DIR;

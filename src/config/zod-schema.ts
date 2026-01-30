@@ -194,6 +194,16 @@ export const MoltbotSchema = z
           )
           .optional(),
         order: z.record(z.string(), z.array(z.string())).optional(),
+        broker: z
+          .object({
+            enabled: z.boolean().optional(),
+            oauthFirst: z.boolean().optional(),
+            allowApiKeyFallback: z.boolean().optional(),
+            providers: z.array(z.string()).optional(),
+            preferredProvider: z.string().optional(),
+          })
+          .strict()
+          .optional(),
         cooldowns: z
           .object({
             billingBackoffHours: z.number().positive().optional(),

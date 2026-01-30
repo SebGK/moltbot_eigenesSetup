@@ -41,6 +41,7 @@ export {
   setMoonshotApiKey,
   setOpencodeZenApiKey,
   setOpenrouterApiKey,
+  setOpenrouterToken,
   setSyntheticApiKey,
   setVeniceApiKey,
   setVercelAiGatewayApiKey,

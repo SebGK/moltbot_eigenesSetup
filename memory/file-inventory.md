@@ -31,3 +31,15 @@ Entries:
 - path: memory/file-inventory.md
   purpose: Inventory of project files with relevance status
   status: Datei ist relevant – muss nicht optimiert werden
+- path: src/agents/auth-broker.ts
+  purpose: Auth Broker config resolution and defaults
+  status: Datei ist relevant – muss nicht optimiert werden
+- path: src/commands/openrouter-oauth.ts
+  purpose: OpenRouter OAuth (PKCE) login flow
+  status: Datei ist relevant – muss nicht optimiert werden
+- path: src/commands/models/auth-broker.ts
+  purpose: CLI commands for Auth Broker status/login/use
+  status: Datei ist relevant – muss nicht optimiert werden
+- path: docs/cli/models.md
+  purpose: CLI documentation for models and auth broker commands
+  status: Datei ist relevant – muss nicht optimiert werden

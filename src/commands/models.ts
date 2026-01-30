@@ -16,6 +16,11 @@ export {
   modelsAuthOrderSetCommand,
 } from "./models/auth-order.js";
 export {
+  modelsAuthBrokerLoginCommand,
+  modelsAuthBrokerStatusCommand,
+  modelsAuthBrokerUseCommand,
+} from "./models/auth-broker.js";
+export {
   modelsFallbacksAddCommand,
   modelsFallbacksClearCommand,
   modelsFallbacksListCommand,

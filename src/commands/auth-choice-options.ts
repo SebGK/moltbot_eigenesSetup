@@ -86,8 +86,8 @@ const AUTH_CHOICE_GROUP_DEFS: {
   {
     value: "openrouter",
     label: "OpenRouter",
-    hint: "API key",
-    choices: ["openrouter-api-key"],
+    hint: "OAuth + API key",
+    choices: ["openrouter-oauth", "openrouter-api-key"],
   },
   {
     value: "ai-gateway",
@@ -135,6 +135,11 @@ export function buildAuthChoiceOptions(params: {
   options.push({ value: "chutes", label: "Chutes (OAuth)" });
   options.push({ value: "openai-api-key", label: "OpenAI API key" });
   options.push({ value: "openrouter-api-key", label: "OpenRouter API key" });
+  options.push({
+    value: "openrouter-oauth",
+    label: "OpenRouter OAuth (PKCE)",
+    hint: "Login via OpenRouter to mint a key",
+  });
   options.push({
     value: "ai-gateway-api-key",
     label: "Vercel AI Gateway API key",

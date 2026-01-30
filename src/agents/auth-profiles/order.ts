@@ -23,6 +23,7 @@ export function resolveAuthProfileOrder(params: {
 }): string[] {
   const { cfg, store, provider, preferredProfile } = params;
   const providerKey = normalizeProviderId(provider);
+  const oauthFirst = cfg?.auth?.broker?.oauthFirst ?? true;
   const now = Date.now();
   const storedOrder = (() => {
     const order = store.order;
@@ -127,7 +128,7 @@ export function resolveAuthProfileOrder(params: {
   // Otherwise, use round-robin: sort by lastUsed (oldest first)
   // preferredProfile goes first if specified (for explicit user choice)
   // lastGood is NOT prioritized - that would defeat round-robin
-  const sorted = orderProfilesByMode(deduped, store);
+  const sorted = orderProfilesByMode(deduped, store, oauthFirst);
 
   if (preferredProfile && sorted.includes(preferredProfile)) {
     return [preferredProfile, ...sorted.filter((e) => e !== preferredProfile)];
@@ -136,7 +137,11 @@ export function resolveAuthProfileOrder(params: {
   return sorted;
 }
 
-function orderProfilesByMode(order: string[], store: AuthProfileStore): string[] {
+function orderProfilesByMode(
+  order: string[],
+  store: AuthProfileStore,
+  oauthFirst: boolean,
+): string[] {
   const now = Date.now();
 
   // Partition into available and in-cooldown
@@ -155,7 +160,14 @@ function orderProfilesByMode(order: string[], store: AuthProfileStore): string[]
   // Then by lastUsed (oldest first = round-robin within type)
   const scored = available.map((profileId) => {
     const type = store.profiles[profileId]?.type;
-    const typeScore = type === "oauth" ? 0 : type === "token" ? 1 : type === "api_key" ? 2 : 3;
+    const typeScore =
+      oauthFirst && type === "oauth"
+        ? 0
+        : oauthFirst && type === "token"
+          ? 1
+          : oauthFirst && type === "api_key"
+            ? 2
+            : 3;
     const lastUsed = store.usageStats?.[profileId]?.lastUsed ?? 0;
     return { profileId, typeScore, lastUsed };
   });

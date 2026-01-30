@@ -66,3 +66,17 @@ moltbot models auth paste-token
 Notes:
 - `setup-token` prompts for a setup-token value (generate it with `claude setup-token` on any machine).
 - `paste-token` accepts a token string generated elsewhere or from automation.
+
+## Auth Broker (OAuth-first)
+
+The Auth Broker provides a unified OAuth-first workflow and a preferred-provider switch.
+
+```bash
+moltbot models auth broker status
+moltbot models auth broker login --provider openai-codex
+moltbot models auth broker use openrouter
+```
+
+Notes:
+- `broker login` uses OAuth/token flows for supported providers (OpenAI Codex, Anthropic setup-token, Gemini CLI, OpenRouter OAuth).
+- `broker use` sets `auth.broker.preferredProvider` and optionally updates the default model.

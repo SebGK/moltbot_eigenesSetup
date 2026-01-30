@@ -102,6 +102,11 @@ const GROUP_ORDER: Record<string, number> = {
 };
 
 const FIELD_LABELS: Record<string, string> = {
+  "auth.broker.enabled": "Auth Broker Enabled",
+  "auth.broker.oauthFirst": "Auth Broker OAuth First",
+  "auth.broker.allowApiKeyFallback": "Auth Broker API Key Fallback",
+  "auth.broker.providers": "Auth Broker Provider Priority",
+  "auth.broker.preferredProvider": "Auth Broker Preferred Provider",
   "meta.lastTouchedVersion": "Config Last Touched Version",
   "meta.lastTouchedAt": "Config Last Touched At",
   "update.channel": "Update Channel",
@@ -479,6 +484,13 @@ const FIELD_HELP: Record<string, string> = {
     "Require @mention in channels before responding (default: true).",
   "auth.profiles": "Named auth profiles (provider + mode + optional email).",
   "auth.order": "Ordered auth profile IDs per provider (used for automatic failover).",
+  "auth.broker.enabled": "Enable unified OAuth Auth Broker (default: true).",
+  "auth.broker.oauthFirst":
+    "Prefer OAuth/token profiles over API keys when rotating profiles (default: true).",
+  "auth.broker.allowApiKeyFallback":
+    "Allow API key fallback if no OAuth/token profile is available (default: true).",
+  "auth.broker.providers": "Provider priority order used by the Auth Broker.",
+  "auth.broker.preferredProvider": "Preferred provider override (must be in providers list).",
   "auth.cooldowns.billingBackoffHours":
     "Base backoff (hours) when a profile fails due to billing/insufficient credits (default: 5).",
   "auth.cooldowns.billingBackoffHoursByProvider":
