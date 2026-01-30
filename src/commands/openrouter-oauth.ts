@@ -14,7 +14,7 @@ export type OpenRouterOAuthResult = {
 
 export type OpenRouterOAuthContext = {
   isRemote: boolean;
-  openUrl: (url: string) => Promise<void>;
+  openUrl: (url: string) => Promise<unknown>;
   log: (msg: string) => void;
   note: (message: string, title?: string) => Promise<void>;
   prompt: (message: string) => Promise<string>;

@@ -141,11 +141,11 @@ export async function modelsAuthBrokerUseCommand(
   const nextProvider =
     provider && providers.includes(provider)
       ? provider
-      : (await select({
+      : await select({
           message: "Select preferred provider",
           options: providers.map((value) => ({ value, label: value })),
-        }));
-  if (!nextProvider) return;
+        });
+  if (typeof nextProvider !== "string") return;
 
   let next = applyBrokerPreferredProvider(cfg, nextProvider);
   if (opts.setDefault ?? true) {
@@ -168,13 +168,13 @@ export async function modelsAuthBrokerLoginCommand(
   const providers = resolveBrokerProviders(cfg);
   const provider = opts.provider?.trim()
     ? normalizeProviderId(opts.provider.trim())
-    : (await select({
+    : await select({
         message: "Select provider to authenticate",
         options: providers.map((value) => ({ value, label: value })),
-      }));
-  if (!provider) return;
+      });
+  if (typeof provider !== "string") return;
 
-  const prompter = createClackPrompter({ runtime, json: false });
+  const prompter = createClackPrompter();
   const authChoice =
     provider === "openai-codex"
       ? "openai-codex"
