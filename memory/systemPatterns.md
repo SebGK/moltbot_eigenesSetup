@@ -1,7 +1,7 @@
 ## System Patterns
 
 ### Architecture Overview
-- TBD
+- Auth Broker layer on top of existing auth-profiles + provider OAuth flows.
 
 ### ADRs
 - TBD

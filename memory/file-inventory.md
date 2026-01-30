@@ -28,3 +28,6 @@ Entries:
 - path: memory/library.md
   purpose: Context7 library IDs
   status: Datei ist relevant – muss nicht optimiert werden
+- path: memory/file-inventory.md
+  purpose: Inventory of project files with relevance status
+  status: Datei ist relevant – muss nicht optimiert werden

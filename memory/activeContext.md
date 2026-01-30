@@ -1,7 +1,7 @@
 ## Active Context
 
 ### Current Focus
-- Initialize unified OAuth/Auth Broker layer (OAuth-first)
+- Plan and implement unified OAuth/Auth Broker layer (OAuth-first)
 
 ### Recent Changes
 - Initialized Memory Bank skeleton files.
@@ -10,7 +10,7 @@
 ### Next Steps
 - Define Auth Broker scope and architecture.
 - Create plan and checkpoints for file inventory updates.
-- Verify OAuth availability for Mistral and GLM 4.7 provider tooling.
+- Implement OpenRouter OAuth fallback for Mistral.
 
 ### Open Questions / Blockers
-- OAuth availability for Mistral / GLM 4.7 provider tooling.
+- None (GLM OAuth not pursued; Mistral via OpenRouter OAuth).

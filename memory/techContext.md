@@ -1,10 +1,11 @@
 ## Tech Context
 
 ### Stack
-- TBD
+- Node.js / TypeScript (monorepo, pnpm)
 
 ### Tooling
-- TBD
+- Auth profiles store (auth-profiles.json)
+- Provider OAuth flows (OpenAI Codex, Gemini CLI, Google Antigravity, Qwen, etc.)
 
 ### Test Strategy
-- TBD
+- TDD with Vitest; add tests for Auth Broker behavior.
